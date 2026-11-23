@@ -87,7 +87,7 @@ const cell = (r, id) => {
 };
 table(Object.keys(label).map((id) => [label[id], cell(resA[id], id), cell(resB[id], id)]),
   ['What the agent tried', 'Proxy only', `Proxy + MXC (${backendName()})`]);
-console.log(c.dim('  A proxy alone is cooperative. MXC makes it the only way out, and the secret never enters the sandbox.\n'));
+console.log(c.dim('  A proxy alone is cooperative. On macOS and Linux, MXC makes it the only way out, and the secret never enters the sandbox.\n'));
 
 services.kill();
 await attacker.close();
