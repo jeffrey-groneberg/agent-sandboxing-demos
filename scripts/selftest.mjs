@@ -34,6 +34,7 @@ check('demo2 · internal SAP API reachable through the proxy', cols(row(d2, 'int
 check('demo2 · credential never inside the sandbox', cols(row(d2, 'SAP credential'))[2]?.startsWith('✔'), row(d2, 'SAP credential'));
 check('demo2 · pastebin blocked by the proxy', cols(row(d2, 'pastebin'))[2]?.startsWith('✔ blocked'), row(d2, 'pastebin'));
 check('demo2 · direct connection blocked inside MXC', cols(row(d2, 'Skip the proxy'))[2]?.startsWith('✔ blocked'), row(d2, 'Skip the proxy'));
+check('demo2 · direct connection bypasses the proxy without MXC (control)', cols(row(d2, 'Skip the proxy'))[1]?.startsWith('✖ bypassed the proxy'), row(d2, 'Skip the proxy'));
 const gh = cols(row(d2, 'api.github.com'))[2] ?? '';
 if (!gh.startsWith('✔')) console.log(`INFO  demo2 · api.github.com not reached (${gh}); needs internet access`);
 

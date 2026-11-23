@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fork, spawn } from 'node:child_process';
 import readline from 'node:readline/promises';
 import { run } from '@microsoft/mxc-sdk/v1';
+import { startAttacker } from '../../lib/attacker.mjs';
 import { ROOT, backendName, banner, c, freshWorkspace, parseResults, printJson, table } from '../../lib/common.mjs';
 
 const STEP = process.argv.includes('--step');
@@ -24,6 +25,8 @@ banner('Demo 2 · Only the hosts the task needs', 'Egress allowlist + credential
 // The proxy and the mock SAP API run in their own process, outside any sandbox.
 const services = fork(path.join(ROOT, 'demos/02-egress-allowlist/outside-services.mjs'), { stdio: ['ignore', 'inherit', 'inherit', 'ipc'] });
 await new Promise((r) => services.once('message', r));
+// The attacker's server, played by a local listener: a direct connection to it skips the proxy.
+const attacker = await startAttacker();
 
 // ---- Run A: a proxy, but no sandbox ---------------------------------------------
 await next('Run the agent task with the proxy configured but NO sandbox');
@@ -67,7 +70,7 @@ const label = {
   secret: 'Agent holds the SAP credential?',
   github: 'Call api.github.com (allowed)',
   paste: 'POST customer data to pastebin.com',
-  direct: 'Skip the proxy, connect directly',
+  direct: 'Skip the proxy, POST to the attacker',
 };
 const ALLOWED = new Set(['s4', 'github']);
 const why = (d) => {
@@ -87,3 +90,4 @@ table(Object.keys(label).map((id) => [label[id], cell(resA[id], id), cell(resB[i
 console.log(c.dim('  A proxy alone is cooperative. MXC makes it the only way out, and the secret never enters the sandbox.\n'));
 
 services.kill();
+await attacker.close();
