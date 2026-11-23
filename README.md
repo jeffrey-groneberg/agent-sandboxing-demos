@@ -42,7 +42,7 @@ npm test                 # runs demos 1-3 headless and checks every outcome
 | **2 · Only the hosts the task needs** | An agent calls a (mock) SAP S/4HANA API and `api.github.com` through a proxy that holds the SAP credential and an allowlist. Pasting data elsewhere is refused by the proxy. Skipping the proxy works without MXC and fails inside it. | `runtimeConfig.networkProxy`: the proxy is the only way out |
 | **3 · Your own agent** | A tiny agent loop whose (scripted) model falls for a prompt injection in a README. Every tool call goes through a 15-line `runTool()` built on the MXC SDK, so the injected command fails and the bug still gets fixed. | `run()` from `@microsoft/mxc-sdk/v1` |
 | **4 · GitHub Copilot CLI** | `copilot --sandbox` runs the tests of a project with a malicious dependency. The default policy already blocks `~/.ssh`; you then deny project secrets, turn off local network access and mask `GH_TOKEN`. `gh` keeps working with a placeholder token. | GitHub Copilot's local sandbox, which is powered by MXC |
-| **5 · Microsoft Copilot SDK** | Your own agent, built with the Microsoft Copilot SDK 2.0 (formerly GitHub Copilot SDK), runs the same tests. Without a sandbox the dependency reads your credential folders and reaches the attacker; with one session option, `permissions.sandbox`, every read is blocked, nothing is delivered, and the tests still pass. | The SDK runs the engine behind GitHub Copilot CLI, including its sandbox (experimental in the SDK) |
+| **5 · Microsoft Copilot SDK** | Your own agent, built with the Microsoft Copilot SDK 2.0 (formerly GitHub Copilot SDK), runs the same tests. Without a sandbox the dependency reads your credential folders and reaches the attacker; with one session option, `permissions.sandbox`, and its two policy rules, every read is blocked, nothing is delivered, and the tests still pass. | The SDK runs the engine behind GitHub Copilot CLI, including its sandbox (experimental in the SDK) |
 
 ### Demo 5 · Your own agent with the Microsoft Copilot SDK
 
@@ -65,6 +65,10 @@ const session = await client.createSession({
   },
 });
 ```
+
+The two policy rules do the blocking. In our macOS rehearsal, `enabled: true` alone kept `~/.ssh` and `~/.azure`
+out but left `default-env.json` readable and let the upload through, as GitHub Copilot CLI's default policy does in
+demo 4.
 
 It needs a GitHub Copilot sign-in: the SDK uses the same login as GitHub Copilot CLI (`copilot login`), or a
 token with GitHub Copilot access in `COPILOT_GITHUB_TOKEN`. If `npm run attacker` from demo 4 still runs in
