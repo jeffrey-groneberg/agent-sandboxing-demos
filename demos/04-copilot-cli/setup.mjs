@@ -118,12 +118,14 @@ ${c.bold('Demo 4 · GitHub Copilot CLI with its MXC-powered sandbox')}
   ${c.bold('Terminal 1')}   npm run attacker
   ${c.bold('Terminal 2')}   cd ${path.relative(process.cwd(), APP)} && copilot --sandbox
 
-  1. ${c.yellow('/sandbox')}                                   show status and the policy dialog
-  2. ${c.yellow('Run the tests with npm test and summarize the result.')}
+  1. ${c.yellow('/sandbox status')}                            confirm the sandbox is on
+  2. ${c.yellow('Run npm test and then sh whoami.sh. Show me the raw output of both commands.')}
      → the telemetry line shows what the sandbox allows and what it blocks
-  3. In ${c.yellow('/sandbox')}, deny ${c.yellow('~/.cf')} and ${c.yellow('**/default-env.json')}, and turn off outbound
-     and local network. Ask again → those rows now read BLOCKED.
+  3. In ${c.yellow('/sandbox')}, deny ${c.yellow('default-env.json')} (and ${c.yellow('/home/node/.cf')} in a Codespace), turn
+     ${c.yellow('Allow local network')} off, mask ${c.yellow('GH_TOKEN')} if your shell exports it. Ask again →
+     default-env.json reads BLOCKED and the upload NOT DELIVERED. Answer ${c.bold('No')} to the bypass prompt.
   4. ${c.yellow('/sandbox policy')}                            writes the effective policy to sandbox-policy.md
+  Steps in detail: demos/04-copilot-cli/README.md
 
   The probe never reads out or sends file contents; it only reports READABLE or BLOCKED.
 `);

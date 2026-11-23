@@ -17,9 +17,10 @@ else
   echo "RESULT|secret|ok|not in the agent's environment"
 fi
 
-# 3. Call a public API the task needs (an allowed host)
-if out=$(curl -sS -m 10 https://api.github.com/zen 2>&1); then
-  echo "RESULT|github|ok|$(printf '%s' "$out" | head -n 1 | cut -c1-40)"
+# 3. Call a public API the task needs (an allowed host).
+#    /rate_limit does not count against GitHub's rate limit, so shared Codespace IPs get a clean 200.
+if out=$(curl -sS -m 10 -o /dev/null -w '%{http_code}' https://api.github.com/rate_limit 2>&1); then
+  echo "RESULT|github|ok|reached, HTTP $out"
 else
   echo "RESULT|github|blocked|$out"
 fi
