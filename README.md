@@ -92,6 +92,19 @@ const result = await run({
 });
 ```
 
+## Before an agent runs unattended: eight questions
+
+| Topic | Question |
+| --- | --- |
+| Wall | Which wall fits how much you trust the code it runs? |
+| Files | Which folders may it write? Which secrets are denied? |
+| Network | Which hosts does the task need? Is the rest denied? |
+| Secrets | Are tokens added at the proxy, never inside the sandbox? |
+| Identity | Does it act with its own least-privilege identity? |
+| Bypass | Who may approve a command outside the sandbox, if anyone? |
+| Logging | Is every blocked access recorded, and who reads it? |
+| Failure | Does an unenforceable policy stop the run instead? |
+
 ## Learn more
 
 - [microsoft/mxc](https://github.com/microsoft/mxc): source, samples, policy reference
