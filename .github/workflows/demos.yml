@@ -1,0 +1,49 @@
+name: demos
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lockfile uses the public npm registry only
+        run: |
+          if grep -n '"resolved"' package-lock.json | grep -v 'https://registry.npmjs.org/'; then
+            echo "package-lock.json must resolve from https://registry.npmjs.org/ only"; exit 1
+          fi
+
+  linux:
+    name: Linux (Bubblewrap)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Sandbox prerequisites
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq bubblewrap slirp4netns iptables iproute2
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+
+  macos:
+    name: macOS (Seatbelt)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run check
+      - run: npm test

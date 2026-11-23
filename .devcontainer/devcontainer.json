@@ -1,0 +1,16 @@
+{
+  "name": "Agent sandboxing demos (MXC)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:4-24-trixie",
+  // MXC's Bubblewrap backend needs unprivileged user namespaces and, for proxy mode, /dev/net/tun.
+  // A default container blocks both, so this disposable dev container runs privileged.
+  "privileged": true,
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "hostRequirements": { "cpus": 2 },
+  "customizations": {
+    "codespaces": { "openFiles": ["README.md"] },
+    "vscode": { "extensions": ["GitHub.copilot-chat"] }
+  }
+}

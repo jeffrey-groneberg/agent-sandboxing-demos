@@ -1,0 +1,23 @@
+{
+  "name": "agent-sandboxing-demos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hands-on demos: sandbox AI agents with Microsoft Execution Containers (MXC) and the GitHub Copilot sandbox",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "node demos/00-check/check.mjs",
+    "demo1": "node demos/01-blast-radius/run.mjs",
+    "demo2": "node demos/02-egress-allowlist/run.mjs",
+    "demo3": "node demos/03-own-agent/agent.mjs",
+    "demo4:setup": "node demos/04-copilot-cli/setup.mjs",
+    "attacker": "node lib/attacker-cli.mjs",
+    "test": "node scripts/selftest.mjs"
+  },
+  "dependencies": {
+    "@microsoft/mxc-sdk": "1.1.0"
+  }
+}
