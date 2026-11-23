@@ -12,7 +12,7 @@ jobs:
   lockfile:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Lockfile uses the public npm registry only
         run: |
           if grep -n '"resolved"' package-lock.json | grep -v 'https://registry.npmjs.org/'; then
@@ -23,8 +23,8 @@ jobs:
     name: Linux (Bubblewrap)
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
       - name: Sandbox prerequisites
@@ -40,8 +40,8 @@ jobs:
     name: macOS (Seatbelt)
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
       - run: npm ci
