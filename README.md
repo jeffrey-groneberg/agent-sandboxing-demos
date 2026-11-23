@@ -17,7 +17,7 @@ in GitHub Copilot.
 | Host | MXC backend | Notes |
 | --- | --- | --- |
 | GitHub Codespaces (this dev container) | Bubblewrap | Prerequisites are installed by `.devcontainer/setup.sh`. The dev container runs privileged so Bubblewrap can create user namespaces. |
-| macOS 15 or later on Apple silicon | Seatbelt | Needs Node.js 24 or later. Works offline, except the one row of demo 2 that calls `api.github.com`. |
+| macOS 15 or later on Apple silicon | Seatbelt | Needs Node.js 24 or later. Demos 1–3 work offline, except demo 2's `api.github.com` row; demo 4 needs the GitHub Copilot service. |
 
 ## Quick start
 
