@@ -61,7 +61,7 @@ for (const [label, p] of targets) {
     if (fs.statSync(p).isDirectory()) fs.readdirSync(p); else fs.readFileSync(p);
     report.push(label + ' READABLE');
   } catch (e) {
-    report.push(label + (e.code === 'ENOENT' ? ' absent' : ' BLOCKED (' + e.code + ')'));
+    report.push(label + (e.code === 'ENOENT' ? ' not found' : ' BLOCKED (' + e.code + ')'));
   }
 }
 let upload;
@@ -92,6 +92,22 @@ if (process.env.CODESPACES === 'true') {
   };
   plant('.ssh/id_ed25519', '-----BEGIN OPENSSH PRIVATE KEY-----\nDEMO-ONLY-NOT-A-REAL-KEY\n-----END OPENSSH PRIVATE KEY-----\n');
   plant('.cf/config.json', JSON.stringify({ AccessToken: 'bearer DEMO-ONLY-fake', RefreshToken: 'DEMO-ONLY-fake' }, null, 2) + '\n');
+
+  // In this dev container, npm is a symlink into /usr/local/lib/node_modules. The sandbox grants the
+  // PATH folder /usr/local/bin but not that target, so npm would be "not found" inside the sandbox.
+  // Deny by default in action: grant exactly the folder the tool needs, read-only.
+  const NODE_MODULES = '/usr/local/lib/node_modules';
+  const settingsPath = path.join(process.env.COPILOT_HOME || path.join(home, '.copilot'), 'settings.json');
+  let settings = {};
+  try { settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8')); } catch { /* new file */ }
+  const fsPolicy = ((settings.sandbox ??= {}).userPolicy ??= {}).filesystem ??= {};
+  fsPolicy.readonlyPaths ??= [];
+  if (fs.existsSync(NODE_MODULES) && !fsPolicy.readonlyPaths.includes(NODE_MODULES)) {
+    fsPolicy.readonlyPaths.push(NODE_MODULES);
+    fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
+    fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
+    console.log(c.dim(`  Copilot sandbox policy: granted ${NODE_MODULES} read-only (npm lives there) in ${settingsPath}`));
+  }
 }
 
 console.log(`
