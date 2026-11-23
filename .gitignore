@@ -2,5 +2,6 @@ node_modules/
 .demo-home/
 .demo-workspace/
 .demo4/
+.demo5/
 sandbox-policy.md
 .DS_Store
